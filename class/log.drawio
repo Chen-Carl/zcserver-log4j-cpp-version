@@ -1,0 +1,265 @@
+<mxfile host="65bd71144e" pages="1">
+    <diagram id="lvlWgYk4VZZeEmc2VrK7" name="Page-1">
+        <mxGraphModel dx="1017" dy="322" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Logger" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="30" width="350" height="270" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="- std::string m_name;&#10;- LogLevel::Level m_level;&#10;- std::list&lt;LogAppender&gt; m_appender;&#10;- std::shared_ptr&lt;LogFormatter&gt; m_formatter;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="2" vertex="1">
+                    <mxGeometry y="26" width="350" height="64" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="2" vertex="1">
+                    <mxGeometry y="90" width="350" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="+ Logger(const std::string &amp;name = &quot;root&quot;);&#10;+ void log(LogLevel::Level level, ptr event);&#10;+ void debug(ptr event);&#10;+ void info(ptr event);&#10;+ void warn(ptr event);&#10;+ void error(ptr event);&#10;+ void fatal(ptr event);&#10;+ void addAppender(std::shared_ptr&lt;LogAppender&gt; appender);&#10;+ void delAppender(std::shared_ptr&lt;LogAppender&gt; appender);&#10;+ void clearAppender();&#10;+ LogLevel::Level getLevel() const;&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="2" vertex="1">
+                    <mxGeometry y="98" width="350" height="172" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="LogAppender" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="370" width="300" height="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="- LogLevel::Level m_level;&#10;- std::shared_ptr&lt;LogFormatter&gt; m_formatter;&#10;- bool m_hasFormatter;&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="6" vertex="1">
+                    <mxGeometry y="28" width="300" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="6" vertex="1">
+                    <mxGeometry y="80" width="300" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="+ virtual ~LogAppender();&#10;+ void setFormatter(std::shared_ptr&lt;LogFormatter&gt; val);&#10;+ void setLevel(LogLevel::Level val);&#10;+ virtual void log(std::shared_ptr&lt;Logger&gt; logger, &#10;LogLevel::Level level, std::shared_ptr&lt;LogEvent&gt; &#10;event) = 0;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="6" vertex="1">
+                    <mxGeometry y="88" width="300" height="102" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="LoggerManager" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="460" y="425" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="+ void log(std::shared_ptr&lt;Logger&gt; &#10;logger, LogLevel::Level level, &#10;std::shared_ptr&lt;LogEvent&gt; event);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="15" vertex="1">
+                    <mxGeometry y="26" width="220" height="54" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="LogEvent" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="20" width="210" height="214" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="- const char *m_file;&#10;- int32_t m_line;&#10;- uint32_t m_elapse;&#10;- uint32_t m_tid;&#10;- uint32_t m_fid;&#10;- uint64_t m_time;&#10;- std::string m_threadName;&#10;- std::stringstream m_ss;&#10;- std::shared_ptr&lt;Logger&gt; m_logger;&#10;- LogLevel::Level m_level;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="18" vertex="1">
+                    <mxGeometry y="26" width="210" height="154" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="18" vertex="1">
+                    <mxGeometry y="180" width="210" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="+ (constructor) LogEvent();" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="18" vertex="1">
+                    <mxGeometry y="188" width="210" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="FileLogAppender" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="630" width="220" height="80" as="geometry">
+                        <mxRectangle x="500" y="385.5" width="130" height="26" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="+ void log(std::shared_ptr&lt;Logger&gt; &#10;logger, LogLevel::Level level, &#10;std::shared_ptr&lt;LogEvent&gt; event);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="23" vertex="1">
+                    <mxGeometry y="26" width="220" height="54" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0.001;exitY=0.067;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.002;entryY=0.769;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="24" target="9" edge="1">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="470" y="490" as="sourcePoint"/>
+                        <mxPoint x="630" y="490" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="26" value="LogFormatter" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="640" width="300" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="- std::string m_pattern;&#10;- std::vector&lt;std::shared_ptr&lt;FormatItem&gt;&gt; m_items;&#10;- void init();" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="26" vertex="1">
+                    <mxGeometry y="26" width="300" height="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="26" vertex="1">
+                    <mxGeometry y="110" width="300" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="+ LogFormatter&lt;const std::string &amp;pattern);&#10;+ std::string format(std::shared_ptr&lt;Logger&gt; logger, &#10;LogLevel::Level level);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="26" vertex="1">
+                    <mxGeometry y="118" width="300" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="FormatItem" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="880" width="300" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="- std::string m_pattern;&#10;- std::vector&lt;std::shared_ptr&lt;FormatItem&gt;&gt; m_items;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="30" vertex="1">
+                    <mxGeometry y="26" width="300" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="30" vertex="1">
+                    <mxGeometry y="70" width="300" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="+ LogFormatter&lt;const std::string &amp;pattern);&#10;+ std::string format(std::shared_ptr&lt;Logger&gt; logger, &#10;LogLevel::Level level);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="30" vertex="1">
+                    <mxGeometry y="78" width="300" height="62" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" value="LogEventWrap" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="280" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="- std::shared_ptr&lt;LogEvent&gt; m_event;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="47" vertex="1">
+                    <mxGeometry y="26" width="270" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="49" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="47" vertex="1">
+                    <mxGeometry y="52" width="270" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="+ (constructor) LogEventWrap(ptr event);&#10;+ (destructor&gt; ~LogEventWrap();&#10;+ std::shared_ptr&lt;LogEvent&gt; getEvent() const;&#10;+ std::stringstream &amp;getSS();" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="47" vertex="1">
+                    <mxGeometry y="60" width="270" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="LogLevel" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="730" width="290" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="+ enum Level;&#10;+ static const char *ToString(LogLevel::Level level);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="52" vertex="1">
+                    <mxGeometry y="26" width="290" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="MessageFormatItem" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1" collapsed="1">
+                    <mxGeometry x="450" y="830" width="150" height="26" as="geometry">
+                        <mxRectangle x="450" y="790" width="290" height="70" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="57" value="+ (constructor) MessageFormatItem();&#10;+ void format(...);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="56" vertex="1">
+                    <mxGeometry y="26" width="150" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" value="LevelFormatItem" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1" collapsed="1">
+                    <mxGeometry x="450" y="870" width="130" height="26" as="geometry">
+                        <mxRectangle x="450" y="870" width="290" height="70" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="60" value="+ (constructor) LevelFormatItem();&#10;+ void format(...);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="59" vertex="1">
+                    <mxGeometry y="26" width="130" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="61" value="ElapseFormatItem" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1" collapsed="1">
+                    <mxGeometry x="450" y="910" width="140" height="26" as="geometry">
+                        <mxRectangle x="450" y="950" width="290" height="70" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="62" value="+ (constructor) ElapseFormatItem();&#10;+ void format(...);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="61" vertex="1">
+                    <mxGeometry y="26" width="140" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="63" value="NameFormatItem" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1" collapsed="1">
+                    <mxGeometry x="450" y="950" width="130" height="26" as="geometry">
+                        <mxRectangle x="450" y="1030" width="290" height="70" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="64" value="+ (constructor) NameFormatItem();&#10;+ void format(...);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="63" vertex="1">
+                    <mxGeometry y="26" width="130" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="65" value="ThreadIdFormatItem" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1" collapsed="1">
+                    <mxGeometry x="450" y="990" width="130" height="26" as="geometry">
+                        <mxRectangle x="450" y="994" width="290" height="70" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="66" value="+ (constructor) ThreadIdFormatItem();&#10;+ void format(...);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="65" vertex="1">
+                    <mxGeometry y="26" width="130" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" value="FiberIdFormatItem" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1" collapsed="1">
+                    <mxGeometry x="450" y="1030" width="130" height="26" as="geometry">
+                        <mxRectangle x="450" y="1040" width="290" height="70" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="68" value="+ (constructor) FiberIdFormatItem();&#10;+ void format(...);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="67" vertex="1">
+                    <mxGeometry y="26" width="130" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="DateTimeFormatItem" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1" collapsed="1">
+                    <mxGeometry x="450" y="1067" width="130" height="26" as="geometry">
+                        <mxRectangle x="450" y="1090" width="290" height="70" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="70" value="+ (constructor) DateTimeFormatItem();&#10;+ void format(...);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="69" vertex="1">
+                    <mxGeometry y="26" width="130" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="78" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="56" target="30">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="310" y="750" as="sourcePoint"/>
+                        <mxPoint x="470" y="750" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="79" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1.002;entryY=0.111;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="59" target="30">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="460" y="859.5" as="sourcePoint"/>
+                        <mxPoint x="390" y="890" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="80" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="61" target="31">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="470" y="869.5" as="sourcePoint"/>
+                        <mxPoint x="400" y="900" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="81" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.997;entryY=0.4;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="63" target="32">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="480" y="879.5" as="sourcePoint"/>
+                        <mxPoint x="410" y="910" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="82" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1.002;entryY=0.271;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="65" target="33">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="490" y="889.5" as="sourcePoint"/>
+                        <mxPoint x="420" y="920" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="83" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="67" target="33">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="500" y="899.5" as="sourcePoint"/>
+                        <mxPoint x="430" y="930" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="84" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.002;entryY=0.748;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="69" target="33">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="510" y="909.5" as="sourcePoint"/>
+                        <mxPoint x="382" y="1013" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="85" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;exitX=0.533;exitY=1.062;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="29" target="30">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="310" y="820" as="sourcePoint"/>
+                        <mxPoint x="470" y="820" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="86" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;exitX=0.415;exitY=1.007;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="6">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="300" y="330" as="sourcePoint"/>
+                        <mxPoint x="460" y="330" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="87" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;exitX=-0.001;exitY=0.849;exitDx=0;exitDy=0;exitPerimeter=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="5" target="26">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="253.79999999999995" y="310.34400000000005" as="sourcePoint"/>
+                        <mxPoint x="30" y="370" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="50" y="274"/>
+                            <mxPoint x="50" y="580"/>
+                            <mxPoint x="230" y="580"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="88" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;exitX=0.682;exitY=0.996;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="9" target="26">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="235.25" y="311.20399999999995" as="sourcePoint"/>
+                        <mxPoint x="280" y="610" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="89" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.005;entryY=0.944;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="19" target="3">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="250" y="180" as="sourcePoint"/>
+                        <mxPoint x="410" y="180" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="90" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;exitX=0.352;exitY=-0.015;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.437;entryY=1.154;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="47" target="21">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="245.25" y="321.20399999999995" as="sourcePoint"/>
+                        <mxPoint x="250" y="390" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="91" value="StdoutLogAppender" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                    <mxGeometry x="450" y="530" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="92" value="+ void log(std::shared_ptr&lt;Logger&gt; &#10;logger, LogLevel::Level level, &#10;std::shared_ptr&lt;LogEvent&gt; event);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="91">
+                    <mxGeometry y="26" width="220" height="54" as="geometry"/>
+                </mxCell>
+                <mxCell id="93" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;entryX=0.905;entryY=1.002;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.068;exitY=-0.007;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="15" target="5">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="320" y="410" as="sourcePoint"/>
+                        <mxPoint x="480" y="410" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="94" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=-0.012;exitY=0.241;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="92" target="9">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="460.22" y="639.618" as="sourcePoint"/>
+                        <mxPoint x="390.5999999999999" y="546.438" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
