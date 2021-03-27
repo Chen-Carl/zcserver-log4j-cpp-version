@@ -6,7 +6,9 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <algorithm>
 #include <boost/lexical_cast.hpp>
+#include <yaml-cpp/yaml.h>
 #include "log.h"
 
 namespace zcserver
@@ -17,7 +19,11 @@ namespace zcserver
         // type  std::shared_ptr<ConfigBarBase>
         typedef std::shared_ptr<ConfigVarBase> ptr;
         // constructor
-        ConfigVarBase(const std::string &name, const std::string &description) : m_name(name), m_description(description) {}
+        ConfigVarBase(const std::string &name, const std::string &description) : m_name(name), m_description(description) 
+        {
+            std::transform(m_name.begin(), m_name.end(), m_name.begin(), ::tolower);
+        }
+
         // virtual deconstructor of base class
         virtual ~ConfigVarBase() {}
 
@@ -34,6 +40,9 @@ namespace zcserver
     };
 
     // subclass template
+    /*
+        A ConfigVar contains name, value, description
+    */
     template <class T>
     class ConfigVar : public ConfigVarBase
     {
@@ -47,6 +56,7 @@ namespace zcserver
         ConfigVar(const std::string &name, const T &default_value, const std::string description = "") : ConfigVarBase(name, description), m_val(default_value) {}
 
         // succeed from father class's virtual method
+        // for testing or debugging, change m_val to string
         std::string toString() override
         {
             try
@@ -60,6 +70,7 @@ namespace zcserver
             return "";
         }
 
+        // read m_val from a string
         bool fromString(const std::string &val)
         {
             try
@@ -77,13 +88,20 @@ namespace zcserver
         void setValue(const T &v) { m_val = v; }
     };
 
+    /*
+        Class Config is a collection of ConfigVar
+        ConfigVarMap is a dict: use name to find ConfigVarBase::ptr
+    */
+
     class Config
     {
     public:
         typedef std::map<std::string, ConfigVarBase::ptr> ConfigVarMap;
 
-
     public:
+        /*
+            Look up for a ConfigVar with the certain name. If the name does not exist, create a new ConfigVar and add it to s_datas.
+        */
         template <class T>
         static typename ConfigVar<T>::ptr Lookup(const std::string &name, const T &default_value, const std::string &description = "")
         {
@@ -94,7 +112,7 @@ namespace zcserver
                 return tmp;
             }
 
-            if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ._0123456789") != std::string::npos)
+            if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyz._0123456789") != std::string::npos)
             {
                 ZCSERVER_LOG_ERROR(ZCSERVER_LOG_ROOT()) << "Lookup name invalid " << name;
                 throw std::invalid_argument(name);
@@ -114,7 +132,13 @@ namespace zcserver
             return std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
         }
 
+        // Lookup returns a ConfigVar<T>::ptr
+        // LookupBase returns a ConfigVarBase::ptr
+        static ConfigVarBase::ptr LookupBase(const std::string &name);
+        static void LoadFromYaml(const YAML::Node &root);
+
     private:
+        // string -> ConfigVarBase::ptr
         static ConfigVarMap s_datas;
         
     };

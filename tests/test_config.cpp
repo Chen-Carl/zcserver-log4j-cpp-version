@@ -42,12 +42,23 @@ void test_yaml()
 	// ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << root;
 }
 
+void test_config()
+{
+	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "before: " << g_int_value_config->getValue();
+	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "before: " << g_float_value_config->toString();
+
+	YAML::Node root = YAML::LoadFile("C:/Users/98790/Desktop/zcserver/log.yml");
+	zcserver::Config::LoadFromYaml(root);
+
+	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "after: " << g_int_value_config->getValue();
+	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "after: " << g_float_value_config->toString();
+
+
+}
+
 int main()
 {
-	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << g_int_value_config->getValue();
-	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << g_float_value_config->toString();
-	
-	test_yaml();
-
+	// test_yaml();
+	test_config();
 	return 0;
 }

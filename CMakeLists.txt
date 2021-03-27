@@ -10,8 +10,7 @@ include_directories(D:/YAML_CPP/include)
 
 link_directories(D:/YAML_CPP/lib)
 
-find_library(YAMLCPP libyaml-cpp.a)
-
+# find_library(YAMLCPP libyaml-cpp.a)
 
 set(LIB_SRC
     src/log.cpp
