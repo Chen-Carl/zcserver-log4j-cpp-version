@@ -3,7 +3,6 @@
 
 namespace zcserver
 {
-
     template <class T, class X = void, int N = 0>
     class Singleton
     {
@@ -19,6 +18,7 @@ namespace zcserver
     class SingletonPtr
     {
     public:
+        // create a new instance
         static std::shared_ptr<T> GetInstance()
         {
             static std::shared_ptr<T> v(new T);
