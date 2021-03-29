@@ -39,6 +39,7 @@ namespace zcserver
         virtual std::string toString() = 0;
         // parse protected information from a string
         virtual bool fromString(const std::string &val) = 0;
+        virtual std::string getTypeName() const = 0;
 
     protected:
         std::string m_name;
@@ -350,6 +351,7 @@ namespace zcserver
 
         const T getValue() const { return m_val; }
         void setValue(const T &v) { m_val = v; }
+        std::string getTypeName() const override { return typeid(T).name(); }
     };
 
     /*
@@ -360,7 +362,7 @@ namespace zcserver
     class Config
     {
     public:
-        typedef std::map<std::string, ConfigVarBase::ptr> ConfigVarMap;
+        typedef std::unordered_map<std::string, ConfigVarBase::ptr> ConfigVarMap;
 
     public:
         /*
@@ -369,12 +371,22 @@ namespace zcserver
         template <class T>
         static typename ConfigVar<T>::ptr Lookup(const std::string &name, const T &default_value, const std::string &description = "")
         {
-            auto tmp = Lookup<T>(name);
-            if (tmp)
+            auto it = s_datas.find(name);
+            if (it != s_datas.end())
             {
-                ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "Lookup name = " << name << " exists";
-                return tmp;
+                auto tmp = std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
+                if (tmp)
+                {
+                    ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "Lookup name = " << name << " exists";
+                    return tmp;
+                }
+                else
+                {
+                    ZCSERVER_LOG_ERROR(ZCSERVER_LOG_ROOT()) << "Lookup name = " << name << " exists but type not " << typeid(T).name() << " real_type = " << it->second->getTypeName() << " " <<  it->second->toString();
+                    return nullptr;
+                }
             }
+
 
             if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyz._0123456789") != std::string::npos)
             {

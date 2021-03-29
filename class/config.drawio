@@ -1,0 +1,64 @@
+<mxfile>
+    <diagram id="H6n0hYFwTPYEacmY1juT" name="第 1 页">
+        <mxGraphModel dx="2048" dy="958" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="ConfigVarBase" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="110" y="90" width="480" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="# std::string m_name;&#10;# std::string m_description;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="2" vertex="1">
+                    <mxGeometry y="26" width="480" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="2" vertex="1">
+                    <mxGeometry y="60" width="480" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="+ (constructor) ConfigVarBase(const std::string &amp;name, const std::string &amp;description);&#10;+ (deconstructor) ~ConfigVarBase();&#10;+ const std::string &amp;getName() const;&#10;+ const std::string &amp;getDescription() const;&#10;+ virtual std::string toString() = 0;&#10;+ virtual bool fromString(const std::string &amp;val) = 0;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="2" vertex="1">
+                    <mxGeometry y="68" width="480" height="92" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="template &lt;class T&gt; ConfigVar" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="300" width="590" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="- T m_val;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="6" vertex="1">
+                    <mxGeometry y="26" width="590" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="6" vertex="1">
+                    <mxGeometry y="52" width="590" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="+ (constructor) ConfigVar(const std::string &amp;name, const T &amp;default_value, const std::string description = &quot;&quot;);&#10;+ std::string toString() override;&#10;+ bool fromString(const std::string &amp;val);&#10;+ const T getValue() const;&#10;+ void setValue(const T &amp;v);" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="6" vertex="1">
+                    <mxGeometry y="60" width="590" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0.395;exitY=-0.01;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.371;entryY=0.996;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="6" target="5" edge="1">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="240" y="410" as="sourcePoint"/>
+                        <mxPoint x="322" y="250" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="15" value="Config" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="500" width="700" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="- static std::map&lt;std::string, ConfigVarBase::ptr&gt; s_datas;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="15" vertex="1">
+                    <mxGeometry y="26" width="700" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="15" vertex="1">
+                    <mxGeometry y="52" width="700" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="+ static typename ConfigVar&lt;T&gt;::ptr Lookup(const std::string &amp;name, const T &amp;default_value, const std::string &amp;description = &quot;&quot;);&#10;+ static typename ConfigVar&lt;T&gt;::ptr Lookup(const std::string &amp;name);&#10;+ static ConfigVarBase::ptr LookupBase(const std::string &amp;name);&#10;+ static void LoadFromYaml(const YAML::Node &amp;root);&#10;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="15" vertex="1">
+                    <mxGeometry y="60" width="700" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;entryX=0.579;entryY=1.058;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="15" target="9">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="414" y="470" as="sourcePoint"/>
+                        <mxPoint x="574" y="470" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="20" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;exitX=0.925;exitY=-0.015;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.01;entryY=0.275;entryDx=0;entryDy=0;entryPerimeter=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="15" target="5">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="600" y="730" as="sourcePoint"/>
+                        <mxPoint x="760" y="730" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

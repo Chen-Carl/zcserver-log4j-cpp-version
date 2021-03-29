@@ -3,7 +3,11 @@
 #include <yaml-cpp/yaml.h>
 
 zcserver::ConfigVar<int>::ptr g_int_value_config(zcserver::Config::Lookup("system.port", (int)8080, "system port"));
-zcserver::ConfigVar<float>::ptr g_float_value_config(zcserver::Config::Lookup("system.port", (float)10.2, "system value"));
+
+zcserver::ConfigVar<float>::ptr g_int_valuex_config(zcserver::Config::Lookup("system.port", (float)8080, "system port"));
+
+zcserver::ConfigVar<float>::ptr g_float_value_config(zcserver::Config::Lookup("system.value", (float)10.2, "system value"));
+
 zcserver::ConfigVar<std::vector<int>>::ptr g_int_vec_value_config(zcserver::Config::Lookup("system.int_vec", std::vector<int>{1, 2}, "system int vector"));
 
 zcserver::ConfigVar<std::list<int>>::ptr g_int_list_value_config(zcserver::Config::Lookup("system.int_list", std::list<int>{1, 2}, "system int vector"));
@@ -56,7 +60,7 @@ void test_yaml()
 void test_config()
 {
 	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "before: " << g_int_value_config->getValue();
-	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "before: " << g_float_value_config->toString();
+	// ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "before: " << g_float_value_config->toString();
 
 #define XX(g_var, name, prefix) \
 { \
