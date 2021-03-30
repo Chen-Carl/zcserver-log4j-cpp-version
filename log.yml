@@ -32,3 +32,34 @@ system:
     k2: 120
     k3: 110
 
+class:
+  person:
+    name: zoe
+    age: 21
+    sex: true
+  map:
+      carl:
+        name: carl
+        age: 21
+        sex: false
+      zzz:
+        name: zzz
+        age: 18
+        sex: true
+  vec_map:
+    k1:
+      - name: m1
+        age: 33
+        sex: true
+      - name: m2
+        age: 44
+        sex: false
+    k2:
+      - name: m21
+        age: 33
+        sex: true
+      - name: m22
+        age: 44
+        sex: false
+
+

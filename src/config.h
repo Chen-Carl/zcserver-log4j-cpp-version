@@ -344,7 +344,7 @@ namespace zcserver
             }
             catch(std::exception& e)
             {
-                ZCSERVER_LOG_ERROR(ZCSERVER_LOG_ROOT()) << "ConfigVar::toString exception" << e.what() << " convert: string to" << typeid(m_val).name();
+                ZCSERVER_LOG_ERROR(ZCSERVER_LOG_ROOT()) << "ConfigVar::toString exception" << e.what() << " convert: string to" << typeid(m_val).name() << " - " << val;
             }
             return false;
         }

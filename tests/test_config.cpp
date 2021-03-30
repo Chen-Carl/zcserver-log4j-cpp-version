@@ -4,7 +4,8 @@
 
 zcserver::ConfigVar<int>::ptr g_int_value_config(zcserver::Config::Lookup("system.port", (int)8080, "system port"));
 
-zcserver::ConfigVar<float>::ptr g_int_valuex_config(zcserver::Config::Lookup("system.port", (float)8080, "system port"));
+// log error
+// zcserver::ConfigVar<float>::ptr g_int_valuex_config(zcserver::Config::Lookup("system.port", (float)8080, "system port"));
 
 zcserver::ConfigVar<float>::ptr g_float_value_config(zcserver::Config::Lookup("system.value", (float)10.2, "system value"));
 
@@ -104,9 +105,98 @@ void test_config()
 	XX_M(g_str_int_umap_value_config, str_int_umap, after);
 }
 
+class Person
+{
+public:
+	Person() {}
+	std::string m_name;
+	int m_age = 0;
+	bool m_sex = 0;
+	std::string toString() const 
+	{
+		std::stringstream ss;
+		ss << "{Person name=" << m_name
+		   << " age=" << m_age
+		   << " sex=" << m_sex
+		   << "}";
+		return ss.str();
+	}
+};
+
+namespace zcserver
+{
+	// specifically transfer std::string to std::list<T>
+	template <>
+	class LexicalCast<std::string, Person>
+	{
+	public:
+		Person operator()(const std::string &v)
+		{
+			YAML::Node node = YAML::Load(v);
+			Person p;
+			p.m_name = node["name"].as<std::string>();
+			p.m_age = node["age"].as<int>();
+			p.m_sex = node["sex"].as<bool>();
+			return p;
+		}
+	};
+
+	// specifically transfer std::list<T> to std::string
+	template <>
+	class LexicalCast<Person, std::string>
+	{
+	public:
+		std::string operator()(const Person &p)
+		{
+			YAML::Node node;
+			node["name"] = p.m_name;
+			node["age"] = p.m_age;
+			node["sex"] = p.m_sex;
+			std::stringstream ss;
+			ss << node;
+			return ss.str();
+		}
+	};
+}
+
+zcserver::ConfigVar<Person>::ptr g_person = zcserver::Config::Lookup("class.person", Person(), "system person");
+
+
+zcserver::ConfigVar<std::map<std::string, Person>>::ptr g_person_map = zcserver::Config::Lookup("class.map", std::map<std::string, Person>(), "system person");
+
+zcserver::ConfigVar<std::map<std::string, std::vector<Person>>>::ptr g_person_vec_map = zcserver::Config::Lookup("class.vec_map", std::map<std::string, std::vector<Person>>(), "system person");
+
+void test_class()
+{
+	// ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "before: " << g_person->getValue().toString() << " - " << g_person->toString();
+	
+#define XX_PM(g_var, prefix) \
+{ \
+	auto m = g_var->getValue(); \
+	for (auto & i : m) \
+	{ \
+		ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << prefix << ": " << i.first << " - " << i.second.toString(); \
+	} \
+	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << prefix << ": size=" << m.size(); \
+} \
+
+	XX_PM(g_person_map, "class.map before: ");
+
+	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "before: " << g_person_vec_map->toString();
+
+	YAML::Node root = YAML::LoadFile("C:/Users/98790/Desktop/zcserver/log.yml");
+	zcserver::Config::LoadFromYaml(root);
+
+	// ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "after: " << g_person->getValue().toString() << " - " << g_person->toString();
+
+	XX_PM(g_person_map, "class.map after: ");
+	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "after: " << g_person_vec_map->toString();
+}
+
 int main()
 {
 	// test_yaml();
-	test_config();
+	// test_config();
+	test_class();
 	return 0;
 }
