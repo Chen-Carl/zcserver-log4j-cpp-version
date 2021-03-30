@@ -13,6 +13,7 @@
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
+#include <functional>
 #include <boost/lexical_cast.hpp>
 #include <yaml-cpp/yaml.h>
 #include "log.h"
@@ -309,12 +310,20 @@ namespace zcserver
     template <class T, class FromStr = LexicalCast<std::string, T>, class ToStr = LexicalCast<T, std::string>>
     class ConfigVar : public ConfigVarBase
     {
-    private:
-        T m_val;
-
     public:
         // shared pointer
         typedef std::shared_ptr<ConfigVar> ptr;
+        // when changing the config item, use a call back function to manifest the old value and the new value
+        typedef std::function<void(const T &old_value, const T &new_value)> on_change_cb;
+
+    private:
+        T m_val;
+        // funcional does not poccess a cmp function.
+        // if function object is in a vector, it is impossible to confirm a function is in the vector
+        // wrap the function object in a map, use the unique key(uint_64) as a index
+        std::map<uint64_t, on_change_cb> m_cbs;
+
+    public:
         // constructor
         ConfigVar(const std::string &name, const T &default_value, const std::string description = "") : ConfigVarBase(name, description), m_val(default_value) {}
 
@@ -350,8 +359,41 @@ namespace zcserver
         }
 
         const T getValue() const { return m_val; }
-        void setValue(const T &v) { m_val = v; }
+        
+        void setValue(const T &v) 
+        { 
+            if (v == m_val)
+                return;
+            // when value is modified, inform the listeners
+            for (auto &i : m_cbs)
+            {
+                i.second(m_val, v);
+            }
+            m_val = v;
+        }
         std::string getTypeName() const override { return typeid(T).name(); }
+
+        // add listener on the call back function
+        void addListener(uint64_t key, on_change_cb cb)
+        {
+            m_cbs[key] = cb;
+        }
+
+        void delListener(uint64_t key)
+        {
+            m_cbs.erase(key);
+        }
+
+        on_change_cb getListener(uint64_t key)
+        {
+            auto it = m_cbs.find(key);
+            return it == m_cbs.end() ? nullptr : it->second;
+        }
+
+        void clearListener()
+        {
+            m_cbs.clear();
+        }
     };
 
     /*
