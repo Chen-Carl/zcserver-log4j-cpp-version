@@ -10,7 +10,7 @@ include_directories(D:/YAML_CPP/include)
 
 link_directories(D:/YAML_CPP/lib)
 
-# find_library(YAMLCPP libyaml-cpp.a)
+# find_library(YAMLCPP yaml-cpp)
 
 set(LIB_SRC
     src/log.cpp
@@ -24,7 +24,7 @@ add_library(zcserver ${LIB_SRC})
 
 add_executable(test tests/test.cpp)
 add_dependencies(test zcserver)
-target_link_libraries(test zcserver)
+target_link_libraries(test zcserver -LD:/YAML_CPP/lib -lyaml-cpp)
 
 add_executable(test_config tests/test_config.cpp)
 add_dependencies(test_config zcserver)

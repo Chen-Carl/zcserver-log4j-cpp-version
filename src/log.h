@@ -20,6 +20,7 @@
 #include <map>
 #include <fstream>
 #include <iostream>
+#include <yaml-cpp/yaml.h>
 #include "util.h"
 #include "singleton.h"
 
@@ -51,11 +52,12 @@
 #define ZCSERVER_LOG_FMT_FATAL(logger, fmt, ...) ZCSERVER_LOG_FMT_LEVEL(logger, zcserver::LogLevel::FATAL, fmt, __VA_ARGS__)
 
 #define ZCSERVER_LOG_ROOT() zcserver::LoggerMgr::GetInstance()->getRoot()
-
+#define ZCSERVER_LOG_NAME(name) zcserver::LoggerMgr::GetInstance()->getLogger(name)
 
 namespace zcserver
 {
     class Logger;
+    class LoggerManager;
 
     // log level
     class LogLevel
@@ -73,6 +75,8 @@ namespace zcserver
 
         // static method: transform the enum Level to a string
         static const char *ToString(LogLevel::Level level);
+        // static method: transform the string to an enum Level
+        static LogLevel::Level FromString(const std::string &str);
     };
 
     // a wrapper for the information of a log event
@@ -149,6 +153,8 @@ namespace zcserver
         std::string m_pattern;                            // format pattern
         std::vector<std::shared_ptr<FormatItem>> m_items; // store items
 
+        bool m_error = false;
+
         // parse the m_pattern
         // used in the constructor
         void init();
@@ -158,11 +164,15 @@ namespace zcserver
 
         // for each format item(m_items), use subclass method format() to output
         std::string format(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event);
+
+        bool isError() const { return m_error; }
+        const std::string getPattern() const { return m_pattern; }
     };
 
     // LogAppender defines the places to receive outputs
     class LogAppender
     {
+    friend class Logger;
     protected:
         LogLevel::Level m_level = LogLevel::DEBUG;
         bool m_hasFormatter = false;
@@ -176,6 +186,8 @@ namespace zcserver
         // pure virtual function
         // for StdoutLogAppender and FileLogAppender to realize
         virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event) = 0;
+
+        virtual std::string toYamlString() = 0;
     };
 
     // std out
@@ -183,6 +195,7 @@ namespace zcserver
     {
     public:
         void log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event);
+        std::string toYamlString() override;
     };
 
     // file out
@@ -196,6 +209,7 @@ namespace zcserver
         FileLogAppender(const std::string& filename);
         void log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event);
         bool reopen();
+        std::string toYamlString() override;
     };
 
     /*
@@ -204,6 +218,7 @@ namespace zcserver
     */
     class Logger : public std::enable_shared_from_this<Logger>
     {
+    friend class LoggerManager;
     private:
         // log name
         std::string m_name;
@@ -211,6 +226,7 @@ namespace zcserver
         LogLevel::Level m_level;
         std::list<std::shared_ptr<LogAppender>> m_appenders;
         std::shared_ptr<LogFormatter> m_formatter;
+        std::shared_ptr<Logger> m_root;
 
     public:
         Logger(const std::string &name = "root");
@@ -237,6 +253,15 @@ namespace zcserver
         // get logger level
         LogLevel::Level getLevel() const { return m_level; }
         const std::string getName() const { return m_name; }
+
+        void setLevel(LogLevel::Level val) { m_level = val; }
+        void setFormatter(std::shared_ptr<LogFormatter> val);
+        void setFormatter(const std::string &val);
+
+        std::shared_ptr<LogFormatter> getFormatter();
+
+        // print the log information
+        std::string toYamlString();
     };
 
     // A wrapper for an event.
@@ -291,7 +316,8 @@ namespace zcserver
         NameFormatItem(const std::string &str = "") {}
         void format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event) override
         {
-            os << logger->getName();
+            // we are probably using root as the logger, in this case we do not output the root but the event logger
+            os << event->getLogger()->getName();
         }
     };
 
@@ -410,6 +436,7 @@ namespace zcserver
         std::shared_ptr<Logger> getLogger(const std::string &name);
         std::shared_ptr<Logger> getRoot() const { return m_root; }
         void init();
+        std::string toYamlString();
     };
 
     typedef zcserver::Singleton<LoggerManager> LoggerMgr;

@@ -360,11 +360,12 @@ namespace zcserver
 
         const T getValue() const { return m_val; }
         
-        void setValue(const T &v) 
+        void setValue(const T &v)
         { 
             if (v == m_val)
                 return;
             // when value is modified, inform the listeners
+            // call back function
             for (auto &i : m_cbs)
             {
                 i.second(m_val, v);
