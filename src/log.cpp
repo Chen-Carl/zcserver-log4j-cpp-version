@@ -270,8 +270,9 @@ namespace zcserver
     {
         YAML::Node node;
         node["type"] = "StdoutLogAppender";
-        node["level"] = LogLevel::ToString(m_level);
-        if (m_formatter)
+        if (m_level != LogLevel::UNKNOWN)
+            node["level"] = LogLevel::ToString(m_level);
+        if (m_hasFormatter && m_formatter)
         {
             node["formatter"] = m_formatter->getPattern();
         }
@@ -279,6 +280,16 @@ namespace zcserver
         ss << node;
         return ss.str();
     }
+
+    void LogAppender::setFormatter(std::shared_ptr<LogFormatter> val) 
+    {
+        m_formatter = val;
+        if (m_formatter)
+            m_hasFormatter = true;
+        else
+            m_hasFormatter = false;
+    }
+
 
     /*********************************
      * class FileLogAppender
@@ -310,10 +321,11 @@ namespace zcserver
     std::string FileLogAppender::toYamlString()
     {
         YAML::Node node;
-        node["type"] = "StdoutLogAppender";
+        node["type"] = "FileLogAppender";
         node["file"] = m_filename;
-        node["level"] = LogLevel::ToString(m_level);
-        if (m_formatter)
+        if (m_level != LogLevel::UNKNOWN)
+            node["level"] = LogLevel::ToString(m_level);
+        if (m_hasFormatter && m_formatter)
         {
             node["formatter"] = m_formatter->getPattern();
         }
@@ -344,6 +356,7 @@ namespace zcserver
                     i->log(self, level, event);
                 }
             }
+            // if logAppender is empty, use m_root
             else if (m_root)
             {
                 m_root->log(level, event);
@@ -378,7 +391,9 @@ namespace zcserver
     {
         if (!appender->getFormatter())
         {
-            appender->setFormatter(m_formatter);
+            // friend class
+            // set appender without setting the m_hasFormatter
+            appender->m_formatter = m_formatter;
         }
         m_appenders.push_back(appender);
     }
@@ -395,7 +410,7 @@ namespace zcserver
         }
     }
 
-    void Logger::clearAppender()
+    void Logger::clearAppenders()
     {
         m_appenders.clear();
     }
@@ -403,7 +418,10 @@ namespace zcserver
     void Logger::setFormatter(std::shared_ptr<LogFormatter> val)
     {
         m_formatter = val;
-
+        
+        // if there is no formatter set in advance,
+        // it will use root formatter
+        // so when modifying the formatter, it should influence the formatter of appenders
         for (auto &i : m_appenders)
         {
             if (!i->m_hasFormatter)
@@ -435,7 +453,8 @@ namespace zcserver
     {
         YAML::Node node;
         node["name"] = m_name;
-        node["level"] = LogLevel::ToString(m_level);
+        if (m_level != LogLevel::UNKNOWN)
+            node["level"] = LogLevel::ToString(m_level);
         if (m_formatter)
             node["formatter"] = m_formatter->getPattern();
         
@@ -515,7 +534,7 @@ namespace zcserver
 
         bool operator==(const LogDefine &oth) const
         {
-            return name == oth.name && level == oth.level && formatter == oth.formatter && appenders == appenders;
+            return name == oth.name && level == oth.level && formatter == oth.formatter && appenders == oth.appenders;
         }
 
         bool operator<(const LogDefine &oth) const
@@ -540,7 +559,7 @@ namespace zcserver
                 auto n = node[i];
                 if (!n["name"].IsDefined())
                 {
-                    std::cout << "log config error: name is null, " << n
+                    std::cout << "log config error: name is null, node at " << n
                               << std::endl;
                     continue;
                 }
@@ -560,17 +579,21 @@ namespace zcserver
                         auto a = n["appenders"][x];
                         if (!a["type"].IsDefined())
                         {
-                            std::cout << "log config error: appender type is null, " << a << std::endl;
+                            std::cout << "log config error: appender type is null, node at " << a << std::endl;
                             continue;
                         }
                         std::string type = a["type"].as<std::string>();
                         LogAppenderDefine lad;
+                        if (a["level"].IsDefined())
+                        {
+                            lad.level = LogLevel::FromString(a["level"].as<std::string>());
+                        }
                         if (type == "FileLogAppender")
                         {
                             lad.type = 1;
                             if (!a["file"].IsDefined())
                             {
-                                std::cout << "log config error: file appender is null, " << a << std::endl;
+                                std::cout << "log config error: file is null, node at " << a << std::endl;
                                 continue;
                             }
                             lad.file = a["file"].as<std::string>();
@@ -585,7 +608,7 @@ namespace zcserver
                         }
                         else
                         {
-                            std::cout << "log config error: appender type is invalid, " << a << std::endl;
+                            std::cout << "log config error: appender type is invalid, node at " << a << std::endl;
                             continue;
                         }
                         ld.appenders.push_back(lad);
@@ -612,7 +635,7 @@ namespace zcserver
                 {
                     n["level"] = LogLevel::ToString(i.level);
                 }
-                if (i.formatter.empty())
+                if (!i.formatter.empty())
                 {
                     n["formatter"] = i.formatter;
                 }
@@ -662,12 +685,13 @@ namespace zcserver
         {
             g_log_defines->addListener(0xF1E231, [](const std::set<LogDefine> &old_value, const std::set<LogDefine> &new_value) {
                 ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "on logger config changed";
-                // add
+                // add a logger
                 for (auto &i : new_value)
                 {
                     std::shared_ptr<Logger> logger;
                     auto it = old_value.find(i);
-                    // a new logger
+
+                    // it is a new logger
                     if (it == old_value.end())
                     {
                         logger = ZCSERVER_LOG_NAME(i.name);
@@ -676,17 +700,19 @@ namespace zcserver
                     {
                         // modified logger
                         if (!(i == *it))
-                        {
                             logger = ZCSERVER_LOG_NAME(i.name);
-                        }
                     }
+
+                    // common operator
+                    // setLevel, setFormatter, setAppenders
                     logger->setLevel(i.level);
                     if (!i.formatter.empty())
                     {
                         logger->setFormatter(i.formatter);
                     }
+
                     // add appenders
-                    logger->clearAppender();
+                    logger->clearAppenders();
                     for (auto &a : i.appenders)
                     {
                         std::shared_ptr<LogAppender> ap;
@@ -699,6 +725,18 @@ namespace zcserver
                             ap.reset(new StdoutLogAppender);
                         }
                         ap->setLevel(a.level);
+                        if (!a.formatter.empty())
+                        {
+                            std::shared_ptr<LogFormatter> fmt(new LogFormatter(a.formatter));
+                            if (!fmt->isError())
+                            {
+                                ap->setFormatter(fmt);
+                            }
+                            else
+                            {
+                                std::cout << "log.name=" << i.name << " appender type=" << a.type << " formatter=" << a.formatter << " is invalid" << std::endl;
+                            }
+                        }
                         logger->addAppender(ap);
                     }
                 }
@@ -714,7 +752,7 @@ namespace zcserver
                         // equivalent to delete the logger
                         auto logger = ZCSERVER_LOG_NAME(i.name);
                         logger->setLevel((LogLevel::Level)100);
-                        logger->clearAppender();
+                        logger->clearAppenders();
                     }
                 }
             });
@@ -728,7 +766,9 @@ namespace zcserver
         auto it = m_loggers.find(name);
         if (it != m_loggers.end())
             return it->second;
+        // if not exist, create a new logger
         std::shared_ptr<Logger> logger(new Logger(name));
+        // empty logAppender, using root instead
         logger->m_root = m_root;
         m_loggers[name] = logger;
         return logger;

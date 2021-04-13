@@ -19,8 +19,6 @@ int main()
     // 结束流式输出的测试
     std::cout << "end stream log" << std::endl;
 
-
-
     // 测试格式化输出
     std::shared_ptr<zcserver::FileLogAppender> file_appender(new zcserver::FileLogAppender("./log.txt"));
     // 构造一个新格式

@@ -4,12 +4,15 @@ logs:
     formatter: "%d%T%m%n"
     appenders:
       - type: FileLogAppender
-        file: log.txt
+        file: log/root.txt
       - type: StdoutLogAppender
   - name: system
     level: debug
     formatter: "%d%T%m%n"
     appenders:
       - type: FileLogAppender
-        path: log.txt
+        file: log/system.txt
+        level: debug
+        formatter: "%d%T[%p]%T%m%n"
       - type: StdoutLogAppender
+        level: debug

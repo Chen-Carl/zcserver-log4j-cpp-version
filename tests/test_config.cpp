@@ -204,13 +204,26 @@ void test_class()
 
 void test_log()
 {
+	static std::shared_ptr<zcserver::Logger> system_log = ZCSERVER_LOG_NAME("system");
+	ZCSERVER_LOG_INFO(system_log) << "hello system" << std::endl;
+
 	std::cout << zcserver::LoggerMgr::GetInstance()->toYamlString() << std::endl;
+
 	YAML::Node root = YAML::LoadFile("C:/Users/98790/Desktop/zcserver/log.yml");
+
 	// Config::LoadFromYaml intrigues a series of modifications of the Log config, when "void setValue(const T &v)" is called to call a call-back function, outputing "on logger config changed" log info.
 	zcserver::Config::LoadFromYaml(root);
 
 	std::cout << " ==================== " << std::endl;
 	std::cout << zcserver::LoggerMgr::GetInstance()->toYamlString() << std::endl;
+	std::cout << " ==================== " << std::endl;
+	std::cout << root << std::endl;
+
+	ZCSERVER_LOG_INFO(system_log) << "hello system" << std::endl;
+	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "hello root" << std::endl;
+
+	system_log->setFormatter("%d - %m%n");
+	ZCSERVER_LOG_INFO(system_log) << "hello system" << std::endl;
 }
 
 int main()

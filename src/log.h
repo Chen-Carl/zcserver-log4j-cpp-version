@@ -181,7 +181,7 @@ namespace zcserver
     public:
         virtual ~LogAppender() {}
         std::shared_ptr<LogFormatter> getFormatter() const { return m_formatter; }
-        void setFormatter(std::shared_ptr<LogFormatter> val) { m_formatter = val; }
+        void setFormatter(std::shared_ptr<LogFormatter> val);
         void setLevel(LogLevel::Level val) { m_level = val; }
         // pure virtual function
         // for StdoutLogAppender and FileLogAppender to realize
@@ -248,7 +248,7 @@ namespace zcserver
         // delete appender
         void delAppender(std::shared_ptr<LogAppender> appender);
         // clear all appenders
-        void clearAppender();
+        void clearAppenders();
 
         // get logger level
         LogLevel::Level getLevel() const { return m_level; }
