@@ -112,7 +112,6 @@ namespace zcserver
 
         void format(const char *fmt, ...);
         void format(const char *fmt, va_list al);
-        int vasprintf(char **strp, const char *fmt, va_list al);
     };
 
     /*

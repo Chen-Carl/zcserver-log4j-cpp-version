@@ -1,5 +1,5 @@
-#ifndef __SYLAR_SINGLETON_H__
-#define __SYLAR_SINGLETON_H__
+#ifndef __ZCSERVER_SINGLETON_H__
+#define __ZCSERVER_SINGLETON_H__
 
 namespace zcserver
 {

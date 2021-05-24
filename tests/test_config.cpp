@@ -51,7 +51,7 @@ void print_yaml(YAML::Node node, int level)
 
 void test_yaml()
 {
-	YAML::Node root = YAML::LoadFile("C:/Users/98790/Desktop/zcserver/test.yml");
+	YAML::Node root = YAML::LoadFile("/home/zoecarl/zcserver-log/test.yml");
 
 	print_yaml(root, 0);
 
@@ -93,7 +93,7 @@ void test_config()
 
 
 
-	YAML::Node root = YAML::LoadFile("C:/Users/98790/Desktop/zcserver/test.yml");
+	YAML::Node root = YAML::LoadFile("/home/zoecarl/zcserver-log/test.yml");
 	zcserver::Config::LoadFromYaml(root);
 
 
@@ -193,7 +193,7 @@ void test_class()
 
 	ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "before: " << g_person_vec_map->toString();
 
-	YAML::Node root = YAML::LoadFile("C:/Users/98790/Desktop/zcserver/test.yml");
+	YAML::Node root = YAML::LoadFile("/home/zoecarl/zcserver-log/test.yml");
 	zcserver::Config::LoadFromYaml(root);
 
 	// ZCSERVER_LOG_INFO(ZCSERVER_LOG_ROOT()) << "after: " << g_person->getValue().toString() << " - " << g_person->toString();
@@ -209,7 +209,7 @@ void test_log()
 
 	std::cout << zcserver::LoggerMgr::GetInstance()->toYamlString() << std::endl;
 
-	YAML::Node root = YAML::LoadFile("C:/Users/98790/Desktop/zcserver/log.yml");
+	YAML::Node root = YAML::LoadFile("/home/zoecarl/zcserver-log/log.yml");
 
 	// Config::LoadFromYaml intrigues a series of modifications of the Log config, when "void setValue(const T &v)" is called to call a call-back function, outputing "on logger config changed" log info.
 	zcserver::Config::LoadFromYaml(root);

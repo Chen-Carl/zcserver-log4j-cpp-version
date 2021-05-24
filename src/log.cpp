@@ -64,31 +64,6 @@ namespace zcserver
      *********************************/
     LogEvent::LogEvent(std::shared_ptr<Logger> logger, LogLevel::Level level, const char *file, int32_t line, uint32_t elapse, uint32_t tid, uint32_t fid, uint64_t time) : m_logger(logger), m_level(level), m_file(file), m_line(line), m_elapse(elapse), m_tid(tid), m_fid(fid), m_time(time) {}
 
-    int LogEvent::vasprintf(char **strp, const char *fmt, va_list ap)
-    {
-        // _vscprintf tells you how big the buffer needs to be
-        int len = _vscprintf(fmt, ap);
-        if (len == -1)
-        {
-            return -1;
-        }
-        size_t size = (size_t)len + 1;
-        char *str = (char *)malloc(size);
-        if (!str)
-        {
-            return -1;
-        }
-        // _vsprintf_s is the "secure" version of vsprintf
-        int r = vsprintf_s(str, len + 1, fmt, ap);
-        if (r == -1)
-        {
-            free(str);
-            return -1;
-        }
-        *strp = str;
-        return r;
-    }
-
     void LogEvent::format(const char *fmt, ...)
     {
         va_list al;

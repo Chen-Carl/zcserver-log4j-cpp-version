@@ -4,7 +4,8 @@ namespace zcserver
 {
     pid_t GetThreadId()
     {
-        return pthread_self();
+        // return pthread_self();
+        return syscall(SYS_gettid);
     }
 
     uint32_t GetFiberId()
