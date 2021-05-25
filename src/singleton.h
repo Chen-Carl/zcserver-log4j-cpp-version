@@ -3,6 +3,7 @@
 
 namespace zcserver
 {
+    // Singleton Pattern
     template <class T, class X = void, int N = 0>
     class Singleton
     {

@@ -1,12 +1,16 @@
 #include "../src/log.h"
 #include "../src/thread.h"
+#include <iostream>
 
 void fun1();
 void fun2();
 
+int count = 0;
+zcserver::RWMutex s_mutex;
+
 std::shared_ptr<zcserver::Logger> g_logger = ZCSERVER_LOG_ROOT();
 
-int main(int argc, char **argv)
+int main()
 {
     ZCSERVER_LOG_INFO(g_logger) << "thread test begin";
     std::vector<zcserver::Thread::ptr> thrs;
@@ -22,6 +26,7 @@ int main(int argc, char **argv)
     }
 
     ZCSERVER_LOG_INFO(g_logger) << "thread test end";
+    ZCSERVER_LOG_INFO(g_logger) << "count = " << count;
     return 0;
 }
 
@@ -31,6 +36,11 @@ void fun1()
                                 << " this.name: " << zcserver::Thread::GetThis()->getName()
                                 << " id: " << zcserver::GetThreadId()
                                 << " this.id: " << zcserver::Thread::GetThis()->getId();
+    for (int i = 0; i < 10; i++)
+    {
+        zcserver::RWMutex::WriteLock lock(s_mutex);
+        count++;
+    }
 }
 
 void fun2()

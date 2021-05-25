@@ -430,14 +430,15 @@ namespace zcserver
         std::shared_ptr<Logger> m_root;
 
     public:
+        // using Singleton to create a single object
         LoggerManager();
-
         std::shared_ptr<Logger> getLogger(const std::string &name);
         std::shared_ptr<Logger> getRoot() const { return m_root; }
         void init();
         std::string toYamlString();
     };
 
+    // LoggerManager Singleton Pattern
     typedef zcserver::Singleton<LoggerManager> LoggerMgr;
 }
 

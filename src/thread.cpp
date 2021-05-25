@@ -10,6 +10,40 @@ namespace zcserver
 
     static std::shared_ptr<Logger> g_logger = ZCSERVER_LOG_NAME("system");
 
+    Semaphore::Semaphore(uint32_t count)
+    {
+        // Initialize semaphore object
+        if (sem_init(&m_semaphore, 0, count))
+        {
+            throw std::logic_error("semaphore init error");
+        }
+    }
+
+    Semaphore::~Semaphore()
+    {
+        // Free resources associated with semaphore object
+        sem_destroy(&m_semaphore);
+    }
+
+    void Semaphore::wait()
+    {
+        // decrements (locks) the semaphore pointed to by sem. If the semaphore's value is greater than zero, then the decrement proceeds, and the function returns, immediately. If the semaphore currently has the value zero, then the call blocks until either it becomes possible to perform the decrement
+        // on error, the value of the semaphore is left unchanged, -1 is returned, and errno is set to indicate the error
+        if (sem_wait(&m_semaphore))
+        {
+            throw std::logic_error("semaphore wait error");
+        }
+    }
+
+    void Semaphore::notify()
+    {
+        // increments (unlocks) the semaphore pointed to by m_semaphore
+        if (sem_post(&m_semaphore))
+        {
+            throw std::logic_error("semaphore post error");
+        }
+    }
+
     Thread::Thread(std::function<void()> cb, const std::string &name): m_cb(cb), m_name(name)
     {
         if (name.empty())
@@ -24,6 +58,9 @@ namespace zcserver
             ZCSERVER_LOG_ERROR(g_logger) << "pthread_create thread fail, rt=" << rt << " name=" << name;
             throw std::logic_error("pthread_create error");
         }
+        // waiting for the function "run"
+        // notified in the function "run"
+        m_semaphore.wait();
     }
 
     Thread::~Thread()
@@ -86,6 +123,7 @@ namespace zcserver
         std::function<void()> cb;
         cb.swap(thread->m_cb);
         cb();
+        thread->m_semaphore.notify();
         return 0;
     }
 }
